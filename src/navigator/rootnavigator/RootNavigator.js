@@ -9,12 +9,23 @@ import firestore from '@react-native-firebase/firestore';
 
 const RootNavigator = () => {
 
-const {userAvaible,setUserAvaible}=useContext(DataContext)
+const {userAvaible,setUserAvaible,setUserInfo,userInfo}=useContext(DataContext)
 
+
+const getUser=async(userid)=>{
+  const newuser = await firestore().collection('Users').doc(userid).collection('UserInfo').doc('Info').get();
+
+setUserInfo(newuser._data)
+}
   // Handle user state changes
-  function onAuthStateChanged(user) {
+ function onAuthStateChanged(user) {
     if(user){
   
+getUser(auth().currentUser.uid)
+ 
+
+
+
      setUserAvaible(true)
     }else{
      setUserAvaible(false)
@@ -47,7 +58,7 @@ useEffect(()=>{
 
 },[])
 
-console.log(userr)
+
   return (
 <>
 {userAvaible==true?(<BottomNavigator/>) :(<AuthNavigator/>)}</>

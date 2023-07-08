@@ -1,11 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import React, { useEffect, useState, useContext} from "react";
+import { Text, View ,StyleSheet} from "react-native";
 import { Avatar, Title, Subheading, Button } from "react-native-paper";
-
+import FastImage from 'react-native-fast-image';
 import auth from '@react-native-firebase/auth'
+import { DataContext } from "../../context/context";
 const Settings = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+
+  const {userAvaible,setUserAvaible,setUserInfo,userInfo}=useContext(DataContext)
+
+
 
   useEffect(() => {
     auth().onAuthStateChanged((user) => {
@@ -13,11 +18,19 @@ const Settings = () => {
       setEmail(user?.email ?? "");
     });
   }, []);
+const imagem=userInfo.userPhoto
 
+console.log(imagem)
   return (
     <View style={{ alignItems: "center", marginTop: 16 }}>
-      <Avatar.Text
-        label={name.split(" ").reduce((prev, current) => prev + current[0], "")}
+     <FastImage
+        style={styles.image}
+        source={{
+          uri:`${imagem}` ,
+          priority: FastImage.priority.normal,
+          cache: FastImage.cacheControl.immutable,
+        }}
+        resizeMode={FastImage.resizeMode.contain}
       />
       <Title>{name}</Title>
       <Subheading>{email}</Subheading>
@@ -25,5 +38,17 @@ const Settings = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  image: {
+    width: 200,
+    height: 200,
+  },
+});
 
 export default Settings;
